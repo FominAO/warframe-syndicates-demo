@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        html {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        img.icon {
+            width: 18px;
+            margin-left: 8px;
+        }
+
+        .progress {
+            padding: 8px;
+            margin: 8px;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .label {
+            font-size: 16px;
+            max-width: 155px;
+        }
+
+        .bar {
+            position: absolute;
+            background-color: rgb(150 243 170);
+            top: 0;
+            left: 0;
+            height: 100%;
+            transition: 0.3s;
+            background-color: #baa564;
+        }
+
+        .text {
+            display: block;
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin: 0 24px;
+            font-size: 24px;
+        }
+
+        .plus {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+        }
+
+        .plus,
+        .minus {
+            cursor: pointer;
+            padding: 4px;
+            font-size: 24px;
+            line-height: 14px;
+            border: 1px solid #baa564;
+        }
+
+        .plus:hover,
+        .minus:hover {
+            color: #f5e0ad;
+        }
+
+        .progress-container {
+            max-width: 400px;
+            min-width: 360px;
+            border: 1px solid #baa564;
+            border-bottom: none;
+            margin: 0px 0 8px 8px;
+        }
+
+        .progresses-list {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 1110px;
+            padding: 8px 8px 0 0;
+            border: 4px double #baa564;
+            background-color: #212121;
+            color: #baa564;
+            position: relative;
+        }
+
+        .background-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            top: 0;
+            left: 0;
+            opacity: 0.025;
+        }
+
+        .main-info {
+            display: flex;
+            position: relative;
+        }
+
+        .main-img-container {
+            position: relative;
+            border-right: 1px solid #baa564;
+            height: 100px;
+            min-width: 100px;
+            overflow: hidden;
+        }
+
+        .main-img {
+            height: 100px;
+        }
+
+        .main-img-shadow {
+            height: 200px;
+            top: -50px;
+            position: absolute;
+            left: -50px;
+            opacity: 0.1;
+        }
+
+        .info {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .label-level {
+            display: flex;
+            height: 100%;
+            padding-top: 4px;
+        }
+
+        .level {
+            width: 52px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .level-icon {
+            position: relative;
+            width: 43px;
+            height: 43px;
+            transform: rotate(45deg) scale(0.6);
+            margin-bottom: 12px;
+        }
+
+        .level-count {
+            transform: scale(1.6) rotate(-45deg);
+            position: absolute;
+            top: 13px;
+            left: 18px;
+            font-weight: bold;
+            color: #f5e0ad;
+        }
+
+        .count {
+            display: flex;
+            border-top: 1px solid #baa564;
+            justify-content: flex-end;
+            align-items: center;
+            padding-right: 8px;
+            font-size: 20px;
+            position: relative;
+        }
+
+        .rep-icon {
+            display: inline-block;
+            filter: invert(1);
+        }
+
+        .rep-icon::after {
+            content: ':';
+        }
+
+        .current-rep {
+            display: inline-block;
+            color: #dadada;
+        }
+
+        .current-rep::after {
+            content: '/';
+            margin: 0 4px;
+        }
+
+        .change-count {
+            position: absolute;
+            top: -24px;
+            right: 8px;
+        }
+
+        .max-level-rep {
+            display: inline-block;
+        }
+
+        .bar-container {
+            display: block;
+            border-top: 1px solid #baa564;
+            border-bottom: 1px solid #baa564;
+            height: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-rect,
+        .shadow-rect {
+            position: absolute;
+
+        }
+
+        .main-rect {
+            width: 31px;
+            height: 31px;
+            top: 6px;
+            left: 6px;
+            background-color: #baa56444;
+
+        }
+
+        .shadow-rect {
+            border: 1px solid #baa564;
+            width: 41px;
+            height: 41px;
+        }
+
+        .shadow-rect::before,
+        .shadow-rect::after {
+            position: absolute;
+            content: ' ';
+            width: 4px;
+            height: 4px;
+            background-color: #baa564;
+        }
+
+        .shadow-rect::before {
+            left: -4px;
+            bottom: -4px;
+        }
+
+        .shadow-rect::after {
+            right: -4px;
+            top: -4px;
+        }
+
+        .up-rect,
+        .down-rect {
+            position: absolute;
+            height: 10px;
+            width: 10px;
+        }
+
+        .up-rect:hover,
+        .down-rect:hover {
+            cursor: pointer;
+            transform: scale(1.5);
+        }
+
+        .up-rect {
+            top: -2px;
+            left: -2px;
+            border-left: 3px solid #f5e0ad;
+            border-top: 3px solid #f5e0ad;
+        }
+
+        .down-rect {
+            bottom: -2px;
+            right: -2px;
+            border-right: 3px solid #f5e0ad;
+            border-bottom: 3px solid #f5e0ad;
+        }
+
+        .diag-main-up,
+        .diag-main-down,
+        .diag-sec-up,
+        .diag-sec-down {
+            position: absolute;
+            height: 1px;
+            width: 20px;
+            background-color: #baa564;
+        }
+
+        .diag-main-up {
+            bottom: 21px;
+            right: -19px;
+        }
+
+        .diag-main-down {
+            top: 21px;
+            left: -19px;
+        }
+
+        .diag-sec-up {
+            bottom: -10px;
+            right: 12px;
+        }
+
+        .diag-sec-down {
+            top: -10px;
+            left: 12px;
+        }
+
+        .diag-sec-up,
+        .diag-sec-down {
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        const COUNT_SPEED = 25;
+        const COUNT_STEP = 123;
+        const MAX_REP = 100000;
+        const MIN_REP = -20000;
+        const REP_STEP = 5000;
+        const REP_DEPS = {
+            0: [1, 0.5, 0, -1, 0, -0.5],
+            1: [0.5, 1, 0, -0.5, -1, 0],
+            2: [0, 0, 1, 0.5, -0.5, -1],
+            3: [-1, -0.5, 0.5, 1, 0, 0],
+            4: [0, -1, -0.5, 0, 1, 0.5],
+            5: [-0.5, 0, -1, 0, 0.5, 1],
+        };
+        const REP_LEVELS = [
+            { min: -44000, max: 0 },
+            { min: -22000, max: 0 },
+            { min: -5000, max: 5000 },
+            { min: 0, max: 22000 },
+            { min: 0, max: 44000 },
+            { min: 0, max: 70000 },
+            { min: 0, max: 99000 },
+            { min: 0, max: 132000 },
+        ];
+        const SYNDICATES = [
+            {
+                index: 0,
+                name: 'Арбитры Гексиса',
+                imgSrc: 'https://static.wikia.nocookie.net/warframe/images/6/66/ArbitarIconGrey.png'
+            },
+            {
+                index: 1,
+                name: 'Цефалон Суда',
+                imgSrc: 'https://static.wikia.nocookie.net/warframe/images/2/28/CephalonIconLightGold.png'
+            },
+            {
+                index: 2,
+                name: 'Стальной Меридиан',
+                imgSrc: 'https://static.wikia.nocookie.net/warframe/images/0/0a/SteelIconPink.png'
+            },
+            {
+                index: 3,
+                name: 'Красная Вуаль',
+                imgSrc: 'https://static.wikia.nocookie.net/warframe/images/a/a1/RedVeilIconLightRed.png'
+            },
+            {
+                index: 4,
+                name: 'Новая Лока',
+                imgSrc: 'https://static.wikia.nocookie.net/warframe/images/c/cf/LokaIconGreen.png'
+            },
+            {
+                index: 5,
+                name: 'Последовательность Перрина',
+                imgSrc: 'https://static.wikia.nocookie.net/warframe/images/4/42/PerrinSequenceIconBlue.png'
+            },
+        ];
+        const DEFAULT_SYNDICATES_PROGRESS = [
+            { level: 2, points: 0, addedPoints: 0 },
+            { level: 2, points: 0, addedPoints: 0 },
+            { level: 2, points: 0, addedPoints: 0 },
+            { level: 2, points: 0, addedPoints: 0 },
+            { level: 2, points: 0, addedPoints: 0 },
+            { level: 2, points: 0, addedPoints: 0 }
+        ];
+    </script>
+    <div class="progresses-list">
+    </div>
+
+    <script>
+        const timers = new Array(SYNDICATES.length);
+        const progresses = document.getElementsByClassName('progress-container');
+
+        drawStartView();
+
+        const progressesValue = DEFAULT_SYNDICATES_PROGRESS.map(e => Object.assign({}, e));
+
+        drawProgresses();
+
+        function patchRep(index, inc) {
+            const mainStep = inc ? REP_STEP : -REP_STEP;
+
+            REP_DEPS[index].forEach((elem, num) => {
+                let step = mainStep * elem;
+                progressesValue[num].addedPoints += step;
+                timers[num] = setChangeCountInterval(num, step);
+            });
+            drawProgresses();
+        }
+        function setChangeCountInterval(num, step) {
+            return setInterval(() => {
+
+                if (step === 0) {
+                    clearInterval(timers[num]);
+                    return;
+                }
+
+                const delta = Math.sign(step) * COUNT_STEP;
+                const progress = progressesValue[num];
+                const levelMin = REP_LEVELS[progress.level].min;
+                const levelMax = REP_LEVELS[progress.level].max;
+                const newValue = progress.points + delta;
+                const newAddedValue = progress.addedPoints - delta;
+
+                if (Math.sign(newAddedValue) !== Math.sign(progress.addedPoints)) {
+                    const lastNewValue = progress.points + delta;
+                    progress.points += progress.addedPoints;
+                    progress.addedPoints = 0;
+                    if (lastNewValue < levelMin && progress.level > 0) {
+                        levelUp(num, -1);
+                    }
+                    drawProgresses();
+                    clearInterval(timers[num]);
+                    return;
+                }
+                if (newValue >= levelMin && newValue <= levelMax) {
+                    progress.points += delta;
+                    progress.addedPoints -= delta;
+                }
+                if (newValue > levelMax && delta > 0) {
+                    progress.addedPoints = 0;
+                    progress.points = levelMax;
+                    clearInterval(timers[num]);
+                }
+                if (newValue < levelMin && progress.level === 0 && delta < 0) {
+                    progress.addedPoints = 0;
+                    progress.points = levelMin;
+                    clearInterval(timers[num]);
+                }
+                if (newValue < levelMin && progress.level > 0) {
+                    progress.addedPoints = 0;
+                    levelUp(num, -1);
+                    clearInterval(timers[num]);
+                }
+                drawProgresses();
+            }, COUNT_SPEED)
+        }
+
+        function drawProgresses() {
+            for (let i = 0; i < progresses.length; i++) {
+                const element = progresses[i];
+                const levelMin = REP_LEVELS[progressesValue[i].level].min;
+                const levelMax = REP_LEVELS[progressesValue[i].level].max;
+
+                let percent = 0;
+                if (progressesValue[i].points === 0) {
+                } else if (progressesValue[i].level >= 2) {
+                    percent = Math.round((progressesValue[i].points / levelMax) * 100);
+                } else if (progressesValue[i].level < 2) {
+                    percent = Math.round((progressesValue[i].points / levelMin) * 100);
+                }
+
+                setBarDirection(element, progressesValue[i].points);
+                drawAddedProgress(i);
+                element.getElementsByClassName('bar')[0].style.width = Math.abs(percent) + "%";
+                element.getElementsByClassName('current-rep')[0].innerHTML = progressesValue[i].points;
+                element.getElementsByClassName('level-count')[0].innerHTML = progressesValue[i].level - 2;
+                if (progressesValue[i].level >= 2) {
+                    element.getElementsByClassName('max-level-rep')[0].innerHTML = levelMax;
+                } else {
+                    element.getElementsByClassName('max-level-rep')[0].innerHTML = levelMin;
+                }
+            }
+        }
+        function levelUp(index, delta) {
+            const level = progressesValue[index].level;
+            const levelMax = REP_LEVELS[level].max;
+            const levelMin = REP_LEVELS[level].min;
+            const points = progressesValue[index].points;
+
+            if (delta > 0 && points < levelMax) {
+                return;
+            }
+            if (level + delta >= 0 && level + delta < REP_LEVELS.length) {
+                progressesValue[index].level += delta;
+                progressesValue[index].points = 0;
+                drawProgresses();
+            }
+        }
+        function drawAddedProgress(index) {
+            const step = progressesValue[index].addedPoints;
+            const element = progresses[index].getElementsByClassName('change-count')[0];
+
+            if (step === 0) {
+                element.innerHTML = '';
+                return;
+            }
+
+            const sign = step > 0 ? '+' : '-';
+
+            if (step > 0) {
+                element.style.color = '#56b320';
+            } else if (step < 0) {
+                element.style.color = '#d81f1f';
+            }
+            element.innerHTML = sign + Math.abs(step);
+
+        }
+        function setBarDirection(elem, points) {
+            if (points >= 2) {
+                elem.getElementsByClassName('bar')[0].style.left = 0;
+                elem.getElementsByClassName('bar')[0].style.right = 'initial';
+                elem.getElementsByClassName('bar')[0].style.backgroundColor = 'rgb(150 243 170)';
+            } else if (points < 2) {
+                elem.getElementsByClassName('bar')[0].style.left = 'initial';
+                elem.getElementsByClassName('bar')[0].style.right = 0;
+                elem.getElementsByClassName('bar')[0].style.backgroundColor = 'rgb(231 119 110)';
+            }
+        }
+        function drawStartView() {
+            SYNDICATES.forEach(elem => {
+                appendNewElem(elem.index, elem.name, elem.imgSrc);
+            })
+
+        }
+        function appendNewElem(index, name, imgSrc) {
+            const template = `
+            <div class="main-info">
+                <div class="main-img-container">
+                    <img class="main-img-shadow" src="${imgSrc}" alt="">
+                    <img class="main-img" src="${imgSrc}" alt="">
+                </div>
+                <div class="info">
+                    <div class="label-level">
+                        <div class="level">
+                            <div class="level-icon">
+                                <div class="main-rect"></div>
+                                <div class="diag-main-up"></div>
+                                <div class="diag-main-down"></div>
+                                <div class="diag-sec-up"></div>
+                                <div class="diag-sec-down"></div>
+                                <div class="shadow-rect"></div>
+                                <div class="up-rect" onclick="levelUp(${index}, 1)"></div>
+                                <div class="down-rect" onclick="levelUp(${index}, -1)"></div>
+                                <div class="level-count">0</div>
+                            </div>
+                        </div>
+                        <div class="label">${name}</div>
+                    </div>
+                    <div class="count">
+                        <img class="rep-icon" src="https://static.wikia.nocookie.net/warframe/images/9/92/ReputationLargeBlack.png/revision/latest/scale-to-width-down/20?cb=20141029201703">
+                        <div class="current-rep">0</div>
+                        <div class="max-level-rep">${REP_LEVELS[2].max}</div>
+                        <div class="change-count"></div>
+                    </div>
+                </div>
+                <div class="plus" onclick="patchRep(${index}, true)">+</div>
+            </div>
+            <div class="bar-container">
+                <div class="bar"></div>
+            </div>
+
+        `
+            const newElem = document.createElement('div');
+            newElem.className = 'progress-container';
+            newElem.innerHTML = template;
+
+            document.getElementsByClassName('progresses-list')[0].appendChild(newElem);
+        }
+    </script>
+</body>
+
+</html>
