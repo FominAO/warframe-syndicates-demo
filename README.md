@@ -1,2 +1,2 @@
 # warframe-syndicates-demo
-Demo-tool for simulate syndicates progress
+https://fominao.github.io/warframe-syndicates-demo/
